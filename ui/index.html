@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FairPick</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">FairPick</p>
+          <h1>Chọn địa điểm, xác thực check-in, nhận reward</h1>
+        </div>
+        <div class="wallet-panel">
+          <span id="walletStatus" class="status">Wallet disconnected</span>
+          <button id="connectWallet" class="primary">Connect Freighter</button>
+        </div>
+      </section>
+
+      <section class="role-strip" aria-label="FairPick roles">
+        <div class="role-pill">
+          <strong>Admin</strong>
+          <span>Cấu hình contract và reward pool</span>
+        </div>
+        <div class="role-pill">
+          <strong>User</strong>
+          <span>Nhập mong muốn, nhận suggestion, tạo session</span>
+        </div>
+        <div class="role-pill">
+          <strong>Verifier</strong>
+          <span>Xác thực QR/check-in và review</span>
+        </div>
+      </section>
+
+      <section class="grid">
+        <aside class="panel settings">
+          <h2>Kết nối contract</h2>
+          <label>
+            Contract ID
+            <input id="contractId" placeholder="C..." autocomplete="off" />
+          </label>
+          <label>
+            RPC URL
+            <input id="rpcUrl" value="https://soroban-testnet.stellar.org" />
+          </label>
+          <label>
+            Network passphrase
+            <input
+              id="networkPassphrase"
+              value="Test SDF Network ; September 2015"
+            />
+          </label>
+          <label>
+            User address
+            <input id="userAddress" placeholder="Connect wallet first" />
+          </label>
+          <label>
+            Session ID
+            <input id="sessionId" type="number" min="1" placeholder="1" />
+          </label>
+          <div class="button-row">
+            <button id="loadConfig" class="secondary">Load config</button>
+            <button id="loadSession" class="secondary">Load session</button>
+          </div>
+        </aside>
+
+        <aside class="panel admin">
+          <h2>Admin</h2>
+          <label>
+            Verifier address
+            <input id="verifierAddress" placeholder="G..." autocomplete="off" />
+          </label>
+          <label>
+            Payment token contract
+            <input id="paymentToken" placeholder="C..." autocomplete="off" />
+          </label>
+          <div class="mini-grid">
+            <label>
+              Session fee
+              <input id="sessionFee" type="number" min="0" value="100000" />
+            </label>
+            <label>
+              Reward amount
+              <input id="rewardAmount" type="number" min="0" value="25000" />
+            </label>
+          </div>
+          <div class="mini-grid">
+            <label>
+              PICK reward
+              <input id="pickReward" type="number" min="0" value="10" />
+            </label>
+            <label>
+              Fund amount
+              <input id="fundAmount" type="number" min="1" value="1000000" />
+            </label>
+          </div>
+          <div class="button-row">
+            <button id="initializeContract" class="secondary">Initialize</button>
+            <button id="fundRewards" class="primary">Fund rewards</button>
+          </div>
+        </aside>
+
+        <section class="panel decision">
+          <div class="section-head">
+            <div>
+              <h2>User</h2>
+              <p>Nhập mong muốn, nhận gợi ý địa điểm, rồi ghi decision lên Soroban.</p>
+            </div>
+            <span class="badge">Suggestion off-chain</span>
+          </div>
+
+          <label class="wish-field">
+            Mong muốn của bạn
+            <textarea id="need" rows="3">Ăn tối gần đây, dưới 150k/người, không quá ồn, hợp đi nhóm 4 người</textarea>
+          </label>
+
+          <div class="form-grid compact-fields">
+            <label>
+              Loại địa điểm
+              <select id="category">
+                <option>Ăn tối</option>
+                <option>Cà phê</option>
+                <option>Nhà hàng</option>
+                <option>Đi chơi</option>
+              </select>
+            </label>
+            <label>
+              Khu vực
+              <input id="area" value="Quận 1, TP.HCM" />
+            </label>
+            <label>
+              Ngân sách / người
+              <input id="budget" value="150000 VND" />
+            </label>
+            <label>
+              Địa điểm đã chọn
+              <input id="selectedPlace" value="place-123" readonly />
+            </label>
+          </div>
+
+          <div class="suggestion-summary" id="suggestionSummary">
+            Chưa có suggestion.
+          </div>
+
+          <div class="places" id="places"></div>
+
+          <div class="hash-panel">
+            <div>
+              <span>Shortlist hash</span>
+              <code id="shortlistHash">-</code>
+            </div>
+            <div>
+              <span>Criteria hash</span>
+              <code id="criteriaHash">-</code>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="generateShortlist" class="secondary">Gợi ý địa điểm</button>
+            <button id="createSession" class="primary">Tạo Decision Session</button>
+          </div>
+        </section>
+
+        <section class="panel checkin">
+          <div class="section-head">
+            <div>
+              <h2>Verifier</h2>
+              <p>Xác thực check-in/review để user nhận reward và PICK reputation.</p>
+            </div>
+            <span class="badge">Reward + PICK</span>
+          </div>
+
+          <label>
+            Check-in proof
+            <input id="checkinProof" value="QR:place-123:user:today" />
+          </label>
+          <label>
+            Review
+            <textarea id="reviewText" rows="5">Không gian ổn, giá đúng tiêu chí, đã ghé thật.</textarea>
+          </label>
+          <div class="hash-panel">
+            <div>
+              <span>Check-in proof hash</span>
+              <code id="checkinHash">-</code>
+            </div>
+            <div>
+              <span>Review hash</span>
+              <code id="reviewHash">-</code>
+            </div>
+          </div>
+          <div class="button-row">
+            <button id="hashReview" class="secondary">Hash proof</button>
+            <button id="confirmCheckin" class="primary">Confirm check-in</button>
+          </div>
+        </section>
+
+        <section class="panel output">
+          <div class="section-head">
+            <div>
+              <h2>Chain Data</h2>
+              <p>RPC simulation, transaction result, config and session reads.</p>
+            </div>
+          </div>
+          <pre id="outputLog">Ready.</pre>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js?v=7"></script>
+  </body>
+</html>

@@ -1,0 +1,443 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f7f3;
+  --ink: #17201b;
+  --muted: #66746c;
+  --line: #d9ded6;
+  --surface: #ffffff;
+  --green: #166534;
+  --green-2: #0f4f2a;
+  --amber: #b45309;
+  --blue: #1d4ed8;
+  --error: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.shell {
+  width: min(1280px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 24px 0 40px;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.role-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.role-pill {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 13px 14px;
+}
+
+.role-pill strong,
+.role-pill span {
+  display: block;
+}
+
+.role-pill strong {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.role-pill span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+h2 {
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.wallet-panel,
+.button-row,
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wallet-panel {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.status,
+.badge {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fbfcf8;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+  padding: 9px 11px;
+  white-space: nowrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 330px) 1fr;
+  grid-template-areas:
+    "settings decision"
+    "admin checkin"
+    "output output";
+  gap: 16px;
+  padding-top: 18px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.settings {
+  grid-area: settings;
+  align-self: start;
+  display: grid;
+  gap: 14px;
+}
+
+.admin {
+  grid-area: admin;
+  align-self: start;
+  display: grid;
+  gap: 14px;
+}
+
+.decision {
+  grid-area: decision;
+}
+
+.checkin {
+  grid-area: checkin;
+  display: grid;
+  gap: 14px;
+}
+
+.output {
+  grid-area: output;
+}
+
+.section-head {
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-head p {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: #314038;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #cdd5ce;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  padding: 10px 11px;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.12);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.compact-fields {
+  margin-top: 12px;
+}
+
+.wish-field textarea {
+  min-height: 86px;
+  font-size: 15px;
+}
+
+.suggestion-summary {
+  margin-top: 14px;
+  border: 1px solid #b7d2bd;
+  border-radius: 8px;
+  background: #f2fbf4;
+  color: #173c23;
+  padding: 12px 13px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.places {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.place {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcf8;
+  padding: 12px;
+  cursor: pointer;
+  min-height: 116px;
+}
+
+.place[aria-selected="true"] {
+  border-color: var(--green);
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+
+.place strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.place em {
+  display: block;
+  margin-top: 8px;
+  color: var(--green);
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.place span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.hash-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.hash-panel div {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcf8;
+  padding: 10px;
+  min-width: 0;
+}
+
+.hash-panel span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+code,
+pre {
+  font-family:
+    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+code {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  color: #1f2937;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 6px;
+  min-height: 42px;
+  padding: 9px 13px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.primary {
+  background: var(--green);
+  color: white;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--green-2);
+}
+
+.secondary {
+  border-color: var(--line);
+  background: #fbfcf8;
+  color: var(--ink);
+}
+
+.secondary:hover:not(:disabled) {
+  border-color: #aeb9af;
+}
+
+#outputLog {
+  min-height: 230px;
+  max-height: 460px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid #cdd5ce;
+  border-radius: 6px;
+  background: #101815;
+  color: #d7fbe3;
+  padding: 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.ok {
+  color: var(--green);
+}
+
+.warn {
+  color: var(--amber);
+}
+
+.bad {
+  color: var(--error);
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .wallet-panel {
+    justify-content: flex-start;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "settings"
+      "admin"
+      "decision"
+      "checkin"
+      "output";
+  }
+
+  .role-strip,
+  .places,
+  .form-grid,
+  .mini-grid,
+  .hash-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .shell {
+    width: min(100vw - 20px, 1280px);
+    padding-top: 12px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  .role-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row,
+  .section-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .button-row button {
+    width: 100%;
+  }
+}

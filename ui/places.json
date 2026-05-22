@@ -1,0 +1,82 @@
+[
+  {
+    "id": "place-123",
+    "name": "Bếp Nhỏ Pasteur",
+    "category": "Ăn tối",
+    "distance": "0.8 km",
+    "price": "120k/người",
+    "rating": "4.6",
+    "tag": "ấm, ít ồn",
+    "vibe": "hợp nhóm nhỏ"
+  },
+  {
+    "id": "place-211",
+    "name": "Cơm Tối Hẻm 42",
+    "category": "Ăn tối",
+    "distance": "1.1 km",
+    "price": "95k/người",
+    "rating": "4.4",
+    "tag": "nhanh, hợp nhóm",
+    "vibe": "tiết kiệm"
+  },
+  {
+    "id": "place-309",
+    "name": "Lẩu Mini Saigon",
+    "category": "Nhà hàng",
+    "distance": "1.7 km",
+    "price": "145k/người",
+    "rating": "4.5",
+    "tag": "đông vui",
+    "vibe": "hợp đi nhóm"
+  },
+  {
+    "id": "place-408",
+    "name": "Mì Cay Góc Phố",
+    "category": "Ăn tối",
+    "distance": "1.3 km",
+    "price": "110k/người",
+    "rating": "4.2",
+    "tag": "mở muộn",
+    "vibe": "ăn nhanh"
+  },
+  {
+    "id": "place-516",
+    "name": "Chay Xanh",
+    "category": "Nhà hàng",
+    "distance": "2.0 km",
+    "price": "135k/người",
+    "rating": "4.7",
+    "tag": "healthy",
+    "vibe": "yên tĩnh"
+  },
+  {
+    "id": "place-617",
+    "name": "Nâu Studio Cafe",
+    "category": "Cà phê",
+    "distance": "0.9 km",
+    "price": "85k/người",
+    "rating": "4.8",
+    "tag": "làm việc, yên tĩnh",
+    "vibe": "không quá ồn"
+  },
+  {
+    "id": "place-718",
+    "name": "Boardgame Hub",
+    "category": "Đi chơi",
+    "distance": "1.5 km",
+    "price": "130k/người",
+    "rating": "4.5",
+    "tag": "nhóm bạn",
+    "vibe": "vui, ở lâu"
+  },
+  {
+    "id": "place-819",
+    "name": "Rạp Mini Nguyễn Huệ",
+    "category": "Đi chơi",
+    "distance": "1.2 km",
+    "price": "140k/người",
+    "rating": "4.3",
+    "tag": "cặp đôi, tối muộn",
+    "vibe": "ít nói chuyện"
+  }
+]
