@@ -1,317 +1,231 @@
 # FairPick
 
-FairPick là một dApp mẫu trên Stellar/Soroban giúp người dùng tạo một “Decision Session” khi chọn địa điểm ăn uống/đi chơi. Ứng dụng lưu bằng chứng minh bạch lên blockchain dưới dạng hash, xác thực check-in, và thưởng token/reputation cho người dùng có đóng góp thật.
+FairPick is a Stellar Soroban dApp for transparent place recommendations and verified visits.
 
-## FairPick Là Gì?
+Users enter a wish, receive off-chain place suggestions, select a place, and create an on-chain `DecisionSession`. The contract stores only hashes and IDs, not private raw location, shortlist, or review data. A verifier can later confirm a real check-in, after which the user receives token rewards and PICK reputation points.
 
-Khi đi chơi, nhóm bạn thường mất thời gian chọn quán. FairPick mô phỏng flow:
+Repository: <https://github.com/vdcmhaodl/FairPick>
 
-1. Người dùng nhập nhu cầu, ví dụ: “Ăn tối gần đây, dưới 150k/người”.
-2. App tạo shortlist địa điểm.
-3. App hash shortlist và tiêu chí chọn để không lưu dữ liệu nhạy cảm trực tiếp lên blockchain.
-4. Người dùng ký giao dịch tạo Decision Session.
-5. Sau khi check-in hợp lệ, verifier xác nhận.
-6. Contract trả reward token và cộng PICK reputation.
+## What It Solves
 
-## Các Khái Niệm Cần Biết
+Normal recommendation apps can silently change rankings, prioritize sponsored venues, or edit reviews in a private database. FairPick keeps the recommendation engine off-chain for speed and privacy, while using Soroban to record the parts that should be auditable:
 
-**Rust**  
-Ngôn ngữ lập trình dùng để viết Soroban smart contract. Bạn không cần biết Rust để chạy app, chỉ cần copy/paste lệnh.
+- the hash of the generated shortlist,
+- the hash of the user's criteria,
+- the selected place ID,
+- the hash of the check-in proof,
+- the hash of the review.
 
-**Stellar**  
-Blockchain tập trung vào thanh toán nhanh, phí thấp. Trong app này Stellar dùng để gửi reward token và ghi nhận dữ liệu minh bạch.
+This gives users a lightweight proof that a decision and verified visit happened without exposing sensitive personal data on-chain.
 
-**Soroban**  
-Nền tảng smart contract của Stellar. File [lib.rs](./lib.rs) là smart contract chính của app.
+## Features
 
-**Smart contract**  
-Code chạy trên blockchain. FairPick contract xử lý session, check-in, reward và PICK reputation.
+- Soroban smart contract written in Rust.
+- Static browser UI with no npm install required.
+- Freighter wallet connection.
+- Off-chain place catalog in `ui/places.json`.
+- User wish input and suggestion scoring.
+- On-chain Decision Session creation.
+- Verifier-based check-in confirmation.
+- Token reward transfer through a Soroban token/SAC contract.
+- PICK reputation tracked in contract storage.
+- Contract tests with mock Stellar Asset Contract token.
 
-**Testnet**  
-Mạng thử nghiệm của Stellar. Token/XLM trên testnet không có giá trị thật.
+## Tech Stack
 
-**Freighter**  
-Ví trình duyệt giống MetaMask nhưng cho Stellar. UI dùng Freighter để ký giao dịch.
+- Smart contract: Rust + Soroban SDK
+- Blockchain: Stellar Testnet
+- Wallet: Freighter
+- Frontend: HTML, CSS, JavaScript
+- Chain access: Stellar RPC
+- Data source: local JSON place catalog
 
-**Contract ID**  
-Địa chỉ contract sau khi deploy. Nó bắt đầu bằng chữ `C...`. Bạn dán Contract ID vào UI để app biết gọi contract nào.
-
-**SAC / Payment Token Contract**  
-Soroban token contract đại diện cho một Stellar asset như USDC hoặc token test. FairPick dùng token contract này để thu session fee và trả reward.
-
-## Cấu Trúc Dự Án
+## Project Structure
 
 ```text
 .
 ├── lib.rs                  # FairPick Soroban smart contract
-├── Cargo.toml              # Cấu hình Rust/Soroban crate
+├── Cargo.toml              # Rust/Soroban crate config
 ├── ui/
-│   ├── index.html          # Giao diện web
-│   ├── styles.css          # CSS
-│   ├── app.js              # Logic frontend, Freighter, RPC, hash
-│   └── places.json         # Danh sách địa điểm off-chain cho suggestion
-├── guide.md                # Hướng dẫn kỹ thuật ngắn
+│   ├── index.html          # Web UI
+│   ├── styles.css          # UI styles
+│   ├── app.js              # Frontend logic, Freighter, RPC, hashing
+│   └── places.json         # Off-chain place catalog
+├── guide.md                # Detailed running guide
 ├── prd.md                  # Product requirements
-└── README.md               # File bạn đang đọc
+└── project-description.md  # Short project description
 ```
 
-## Cài Đặt Công Cụ
+## Requirements
 
-### 1. Cài Rust
+Install these before running the project:
 
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
+- Rust: <https://rustup.rs>
+- Stellar CLI: <https://developers.stellar.org/docs/tools/stellar-cli>
+- Freighter wallet: <https://freighter.app>
+- Python 3, used only to serve the static UI locally
 
-Sau khi cài xong, mở terminal mới hoặc chạy:
-
-```bash
-source "$HOME/.cargo/env"
-```
-
-Kiểm tra:
-
-```bash
-rustc --version
-cargo --version
-```
-
-### 2. Cài target build cho smart contract
+Add the required Rust targets:
 
 ```bash
 rustup target add wasm32-unknown-unknown
 rustup target add wasm32v1-none
 ```
 
-### 3. Cài Stellar CLI
+Install Stellar CLI if needed:
 
 ```bash
 cargo install --locked stellar-cli
 ```
 
-Kiểm tra:
+Verify:
 
 ```bash
+rustc --version
+cargo --version
 stellar --version
 ```
 
-### 4. Cài Freighter
+## Quick Start
 
-1. Vào `https://freighter.app`.
-2. Cài extension cho Chrome/Brave/Firefox.
-3. Tạo ví.
-4. Mở Freighter và chuyển network sang `Testnet`.
+Clone the repository:
 
-## Chạy App Local
+```bash
+git clone https://github.com/vdcmhaodl/FairPick.git
+cd FairPick
+```
 
-### 1. Chạy test contract
+Run contract tests:
 
 ```bash
 cargo test --locked
 ```
 
-Nếu thành công, bạn sẽ thấy:
-
-```text
-3 passed
-```
-
-Test này không cần ví, không cần deploy. Nó chạy contract trong môi trường giả lập.
-
-### 2. Build smart contract
+Build the contract:
 
 ```bash
 stellar contract build
 ```
 
-Kết quả sẽ tạo file:
+The deployable WASM will be generated at:
 
 ```text
 target/wasm32v1-none/release/fairpick.wasm
 ```
 
-### 3. Chạy giao diện web
+Run the UI:
 
 ```bash
 python3 -m http.server 5174 --bind 127.0.0.1 -d ui
 ```
 
-Mở browser:
+Open:
 
 ```text
 http://127.0.0.1:5174/
 ```
 
-Nếu port bị chiếm:
+Use `http`, not `https`.
 
-```bash
-python3 -m http.server 5175 --bind 127.0.0.1 -d ui
-```
+## Contract API
 
-Rồi mở:
+The main contract functions are:
 
-```text
-http://127.0.0.1:5175/
-```
+- `initialize(admin, verifier, payment_token, session_fee, reward_amount, pick_reward)`
+- `fund_rewards(from, amount)`
+- `create_session(user, shortlist_hash, criteria_hash, selected_place_id)`
+- `confirm_checkin(session_id, checkin_proof_hash, review_hash)`
+- `set_verifier(new_verifier)`
+- `set_economics(session_fee, reward_amount, pick_reward)`
+- `get_session(session_id)`
+- `is_verified_visit(session_id)`
+- `pick_balance(user)`
+- `verified_visits(user)`
+- `config()`
 
-## Các Tính Năng Trong UI
+## Data Model
 
-### Network
-
-Phần này cấu hình app gọi đúng contract và đúng network.
-
-**Contract ID**  
-Dán địa chỉ contract đã deploy, bắt đầu bằng `C...`.
-
-**RPC URL**  
-Mặc định:
+The full place list is not stored on-chain. It lives in:
 
 ```text
-https://soroban-testnet.stellar.org
+ui/places.json
 ```
 
-Đây là endpoint để đọc/gửi giao dịch Soroban.
+The UI reads that JSON file, scores suggestions, and creates hashes. The contract stores only:
 
-**Network passphrase**  
-Mặc định:
+- `shortlist_hash`
+- `criteria_hash`
+- `selected_place_id`
+- `checkin_proof_hash`
+- `review_hash`
+- session status
+- reward information
+- PICK reputation
 
-```text
-Test SDF Network ; September 2015
-```
+This keeps private user data and raw recommendations off-chain.
 
-Không sửa nếu bạn dùng Testnet.
-
-**User address**  
-Địa chỉ ví người dùng. Khi bấm `Connect Freighter`, app tự điền.
-
-**Session ID**  
-ID của Decision Session. Sau khi tạo session thành công, contract trả về ID như `1`, `2`, `3`.
-
-**Load config**  
-Đọc cấu hình contract: admin, verifier, token reward, session fee, reward amount, PICK reward.
-
-**Load session**  
-Đọc thông tin một session theo Session ID.
+## UI Roles
 
 ### Admin
 
-Phần này dùng cho admin contract.
+The admin initializes the contract and funds the reward pool.
 
-**Verifier address**  
-Địa chỉ ví được quyền xác nhận check-in. Ví này sẽ bấm `Confirm check-in`.
+Admin fields:
 
-**Payment token contract**  
-Contract token dùng để thu phí và trả reward. Đây có thể là SAC của USDC hoặc token test.
-
-**Danh sách địa điểm lấy từ đâu?**  
-UI đọc địa điểm từ [ui/places.json](./ui/places.json). File này đóng vai trò backend/data nhỏ cho MVP. Khi bấm `Gợi ý địa điểm`, frontend tải JSON, chấm điểm địa điểm theo mong muốn/ngân sách/category, rồi chỉ gửi `shortlist_hash`, `criteria_hash` và `selected_place_id` lên contract.
-
-**Session fee**  
-Số token user gửi vào contract khi tạo Decision Session.
-
-**Reward amount**  
-Số token user nhận lại khi check-in hợp lệ.
-
-**PICK reward**  
-Điểm reputation nội bộ user nhận sau check-in. PICK trong MVP này không phải token transferable, mà là điểm reputation lưu trong contract.
-
-**Fund amount**  
-Số token admin nạp vào reward pool.
-
-**Initialize**  
-Khởi tạo contract. Chỉ gọi một lần sau deploy.
-
-**Fund rewards**  
-Nạp token vào reward pool để contract có tiền trả thưởng.
+- `Verifier address`: wallet allowed to confirm check-ins.
+- `Payment token contract`: Soroban token/SAC contract used for fee and reward transfers.
+- `Session fee`: amount user pays when creating a session.
+- `Reward amount`: token amount paid after verified check-in.
+- `PICK reward`: reputation points earned after verification.
+- `Fund amount`: token amount added to the reward pool.
 
 ### User
 
-Phần này là app chính cho người dùng: nhập mong muốn, nhận suggestion, chọn địa điểm, rồi tạo Decision Session.
+The user enters a wish, receives suggestions, selects one place, and creates a Decision Session.
 
-**Mong muốn của bạn**  
-Nhu cầu tự nhiên của người dùng, ví dụ “Ăn tối gần đây, dưới 150k/người, không quá ồn, hợp đi nhóm 4 người”.
+Example wish:
 
-**Loại địa điểm**  
-Loại địa điểm: ăn tối, cà phê, nhà hàng, đi chơi.
+```text
+Dinner nearby, under 150k per person, not too noisy, good for 4 people
+```
 
-**Khu vực**  
-Khu vực tìm kiếm.
+The UI creates:
 
-**Ngân sách / người**  
-Ngân sách mỗi người.
+- a shortlist hash,
+- a criteria hash,
+- a selected place ID.
 
-**Địa điểm đã chọn**  
-Place ID của suggestion đang được chọn. ID này sẽ được ghi vào contract.
-
-**Gợi ý địa điểm**  
-Tạo shortlist mẫu gồm 5 địa điểm, chấm điểm theo loại địa điểm, ngân sách và từ khóa trong mong muốn. UI hiển thị lý do suggestion được chọn. Đây là phần off-chain, đúng với PRD: recommendation engine không cần chạy on-chain.
-
-**Suggestion cards**  
-Mỗi card là một địa điểm gợi ý. Bấm card để chọn địa điểm cuối cùng.
-
-**Shortlist hash**  
-Hash SHA-256 của shortlist. Contract chỉ lưu hash này, không lưu toàn bộ dữ liệu địa điểm.
-
-**Criteria hash**  
-Hash SHA-256 của tiêu chí chọn địa điểm.
-
-**Tạo Decision Session**  
-Gửi giao dịch on-chain để tạo Decision Session. Freighter sẽ hiện popup để bạn ký.
+Then the user signs `create_session` with Freighter.
 
 ### Verifier
 
-Phần này mô phỏng xác thực user đã đến địa điểm thật.
+The verifier confirms the user actually visited the selected place.
 
-**Check-in proof**  
-Bằng chứng check-in, ví dụ QR code hoặc chuỗi proof từ merchant. UI hash dữ liệu này trước khi gửi.
+Verifier flow:
 
-**Review**  
-Nội dung review. UI hash review trước khi gửi để tránh lưu raw review lên blockchain.
+- enter Session ID,
+- enter check-in proof,
+- enter review text,
+- hash proof and review,
+- call `confirm_checkin`.
 
-**Hash proof**  
-Tạo `checkin_proof_hash` và `review_hash`.
+After success, the session becomes verified and the user receives rewards.
 
-**Confirm check-in**  
-Verifier ký giao dịch xác nhận check-in. Sau khi thành công:
+## Deploy to Stellar Testnet
 
-- Session chuyển sang `Verified`.
-- User nhận reward token nếu reward pool còn đủ.
-- User được cộng PICK reputation.
-- Review được xem là “Verified Visit”.
-
-### Chain Data
-
-Khung log hiển thị:
-
-- Hash đã tạo.
-- Lỗi kết nối ví hoặc RPC.
-- Hash giao dịch.
-- Kết quả đọc contract.
-- Kết quả submit giao dịch.
-
-Nếu nút bấm không có phản hồi, hãy nhìn khung này trước.
-
-## Deploy Contract Lên Testnet
-
-### 1. Tạo admin identity
+Create and fund an admin identity:
 
 ```bash
 stellar keys generate --global fairpick-admin --network testnet --fund
 ```
 
-Kiểm tra:
-
-```bash
-stellar keys list
-```
-
-### 2. Build contract
+Build:
 
 ```bash
 stellar contract build
 ```
 
-### 3. Deploy contract
+Deploy:
 
 ```bash
 stellar contract deploy \
@@ -320,46 +234,19 @@ stellar contract deploy \
   --network testnet
 ```
 
-CLI sẽ in ra một chuỗi bắt đầu bằng `C...`. Đó là `Contract ID`.
+The command prints a contract address beginning with `C...`. That value is the FairPick `Contract ID`.
 
-Ví dụ:
+Paste it into the UI field:
 
 ```text
-CA123...XYZ
+Contract ID
 ```
 
-Dán chuỗi này vào ô `Contract ID` trong UI.
+## Payment Token Contract
 
-## Lấy Public Key Của Identity
+FairPick needs a Soroban token contract for session fees and rewards.
 
-Xem danh sách identity:
-
-```bash
-stellar keys list
-```
-
-Lấy public key:
-
-```bash
-stellar keys address fairpick-admin
-```
-
-Bạn có thể tạo verifier:
-
-```bash
-stellar keys generate --global fairpick-verifier --network testnet --fund
-stellar keys address fairpick-verifier
-```
-
-## Payment Token Contract Lấy Ở Đâu?
-
-FairPick cần một token contract để thu session fee và trả reward.
-
-Có 2 cách:
-
-### Cách 1: Dùng SAC của một Stellar asset có sẵn
-
-Nếu bạn có asset dạng `CODE:ISSUER`, deploy SAC:
+For a Stellar asset, deploy or resolve its Stellar Asset Contract:
 
 ```bash
 stellar contract asset deploy \
@@ -368,83 +255,29 @@ stellar contract asset deploy \
   --network testnet
 ```
 
-Kết quả trả về là token contract ID, bắt đầu bằng `C...`. Dán vào `Payment token contract`.
+The returned `C...` address is the `Payment token contract`.
 
-### Cách 2: Chỉ test contract local
+For local tests, no external token setup is needed. The Rust tests create a mock Stellar Asset Contract token automatically.
 
-Nếu bạn chưa có token testnet, chạy:
+## Basic Usage Flow
 
-```bash
-cargo test --locked
-```
+1. Build and deploy the FairPick contract.
+2. Paste the FairPick `Contract ID` into the UI.
+3. Connect Freighter on Testnet.
+4. In `Admin`, enter verifier and payment token contract, then click `Initialize`.
+5. Fund the reward pool with `Fund rewards`.
+6. In `User`, enter a wish and click `Gợi ý địa điểm`.
+7. Select a suggestion card.
+8. Click `Tạo Decision Session` and sign with Freighter.
+9. In `Verifier`, enter the Session ID, check-in proof, and review.
+10. Click `Confirm check-in` and sign with the verifier wallet.
+11. Use `Load session` to confirm the session is verified.
 
-Unit test tự tạo mock SAC token, mint token, tạo session, xác nhận check-in và kiểm tra reward.
-
-UI on-chain cần token contract thật, vì contract phải gọi `transfer`.
-
-## Flow Sử Dụng Thực Tế Trên UI
-
-### Lần đầu sau khi deploy
-
-1. Mở UI.
-2. Dán `Contract ID`.
-3. Connect Freighter bằng ví admin.
-4. Nhập `Verifier address`.
-5. Nhập `Payment token contract`.
-6. Bấm `Initialize`.
-7. Đảm bảo ví admin có token balance trong payment token.
-8. Bấm `Fund rewards`.
-9. Bấm `Load config` để kiểm tra.
-
-### User tạo decision
-
-1. Connect Freighter bằng ví user.
-2. Nhập nhu cầu, category, budget, area.
-3. Nhập `Mong muốn của bạn`.
-4. Bấm `Gợi ý địa điểm`.
-5. Chọn một suggestion card.
-6. Bấm `Tạo Decision Session`.
-7. Ký giao dịch trong Freighter.
-8. Copy hoặc ghi nhớ Session ID được trả về trong log.
-
-### Verifier xác nhận check-in
-
-1. Connect Freighter bằng ví verifier.
-2. Nhập Session ID.
-3. Nhập check-in proof.
-4. Nhập review.
-5. Bấm `Hash proof`.
-6. Bấm `Confirm check-in`.
-7. Ký giao dịch trong Freighter.
-8. Bấm `Load session` để xem trạng thái `Verified`.
-
-## Những Gì Được Lưu On-Chain?
-
-Contract lưu:
-
-- User address.
-- Hash của shortlist.
-- Hash của criteria.
-- ID địa điểm được chọn.
-- Hash của check-in proof.
-- Hash của review.
-- Trạng thái session.
-- Reward amount.
-- PICK reputation.
-- Timestamp tạo và verify.
-
-Contract không lưu:
-
-- GPS raw location.
-- Nội dung review đầy đủ.
-- Danh sách địa điểm đầy đủ.
-- Dữ liệu cá nhân nhạy cảm.
-
-## Lỗi Thường Gặp
+## Common Issues
 
 ### `Failed to find config identity for fairpick-admin`
 
-Bạn chưa tạo identity:
+Create the identity first:
 
 ```bash
 stellar keys generate --global fairpick-admin --network testnet --fund
@@ -452,116 +285,72 @@ stellar keys generate --global fairpick-admin --network testnet --fund
 
 ### `Address already in use`
 
-Port UI đang bị chiếm. Dùng port khác:
+The UI port is already taken. Use another port:
 
 ```bash
 python3 -m http.server 5175 --bind 127.0.0.1 -d ui
 ```
 
-### Page can't be reached
+Then open:
 
-Kiểm tra server đã chạy chưa:
-
-```bash
-curl -I http://127.0.0.1:5174/
+```text
+http://127.0.0.1:5175/
 ```
 
-Chạy lại:
+### Browser says page cannot be reached
 
-```bash
-python3 -m http.server 5174 --bind 127.0.0.1 -d ui
-```
-
-Mở đúng URL:
+Make sure the server is running and use `http`, not `https`:
 
 ```text
 http://127.0.0.1:5174/
 ```
 
-Không dùng `https`.
+### `Error(Contract, #2)`
 
-### Nút bấm không phản hồi
+This means `NotInitialized`.
 
-Hard refresh:
+Fix:
 
-```text
-Cmd + Shift + R
-```
-
-Sau đó nhìn khung `Chain Data`. Nếu SDK, Freighter hoặc RPC lỗi, app sẽ ghi lỗi ở đó.
-
-### Freighter không hiện popup
-
-Kiểm tra:
-
-- Freighter đã cài chưa.
-- Freighter đang ở Testnet chưa.
-- Website đang mở bằng `http://127.0.0.1:5174/`.
-- Browser đã cho phép Freighter kết nối chưa.
+1. Check that the FairPick `Contract ID` is correct.
+2. Connect with the admin wallet.
+3. Fill verifier and payment token contract.
+4. Click `Initialize`.
+5. Try the user action again.
 
 ### `Simulation failed`
 
-Thường do:
+Common causes:
 
-- Sai Contract ID.
-- Contract chưa initialize.
-- Sai Payment token contract.
-- Account chưa có token balance.
-- Reward pool chưa được fund.
-- Dùng ví không đúng quyền admin/verifier.
+- wrong Contract ID,
+- contract not initialized,
+- wrong payment token contract,
+- account has no token balance,
+- reward pool is empty,
+- wrong wallet role is connected.
 
-Nếu log có:
-
-```text
-Error(Contract, #2)
-```
-
-Đó là lỗi `NotInitialized`. Hãy dán đúng `Contract ID`, connect ví admin, nhập `Verifier address` và `Payment token contract`, rồi bấm `Initialize` trước khi user bấm `Tạo Decision Session`.
-
-## Các Lệnh Quan Trọng
+## Development Commands
 
 ```bash
-# Test contract
+# Run tests
 cargo test --locked
 
-# Build contract
+# Build deployable WASM
 stellar contract build
 
-# Chạy UI
+# Serve UI
 python3 -m http.server 5174 --bind 127.0.0.1 -d ui
 
-# Tạo admin testnet
-stellar keys generate --global fairpick-admin --network testnet --fund
-
-# Deploy contract
-stellar contract deploy \
-  --wasm target/wasm32v1-none/release/fairpick.wasm \
-  --source fairpick-admin \
-  --network testnet
-
-# Xem identities
+# List Stellar CLI identities
 stellar keys list
 ```
 
-## Trạng Thái Hiện Tại Của MVP
+## MVP Limitations
 
-Hoàn thiện:
+- Suggestions are generated from `ui/places.json`, not a production backend.
+- PICK is internal reputation state, not a transferable token.
+- The payment token must already exist as a Soroban token/SAC contract for on-chain UI flows.
+- The UI is intentionally simple and uses browser-loaded ESM packages.
 
-- Soroban contract.
-- Unit tests.
-- WASM build.
-- Static web UI.
-- Freighter signing flow.
-- Hash shortlist/criteria/check-in/review.
-- Create session.
-- Confirm check-in.
-- Read config/session.
+## License
 
-Cần chuẩn bị thêm để demo on-chain đầy đủ:
-
-- Deploy contract lên Testnet.
-- Có Payment token contract hợp lệ.
-- Admin có token balance để fund reward pool.
-- User có token balance để trả session fee.
-- Verifier dùng đúng ví đã cấu hình.
-# FairPick
+Educational / hackathon MVP.
