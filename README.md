@@ -9,8 +9,6 @@ Repository: <https://github.com/vdcmhaodl/FairPick>
 ## Testnet Deployment
 
 - Contract ID: `CBOTOKHSGS33OXRPKBO7SQCVS4ANHLPWFEXVPEXQYMWWJRROLGBIPFQE`
-- Payment token contract: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
-- Verifier address: `GDYXXIJBG46NWEPDSPFPZ77A2BBBSFXFGGGJGJE7XH46FWZBOMGWJFLL`
 - RPC URL: `https://soroban-testnet.stellar.org`
 - Network passphrase: `Test SDF Network ; September 2015`
 - Contract explorer: <https://stellar.expert/explorer/testnet/contract/CBOTOKHSGS33OXRPKBO7SQCVS4ANHLPWFEXVPEXQYMWWJRROLGBIPFQE>
