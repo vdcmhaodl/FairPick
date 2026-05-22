@@ -9,12 +9,26 @@ Repository: <https://github.com/vdcmhaodl/FairPick>
 ## Testnet Deployment
 
 - Contract ID: `CBOTOKHSGS33OXRPKBO7SQCVS4ANHLPWFEXVPEXQYMWWJRROLGBIPFQE`
+- Payment token contract: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
+- Verifier address: `GDYXXIJBG46NWEPDSPFPZ77A2BBBSFXFGGGJGJE7XH46FWZBOMGWJFLL`
+- RPC URL: `https://soroban-testnet.stellar.org`
+- Network passphrase: `Test SDF Network ; September 2015`
 - Contract explorer: <https://stellar.expert/explorer/testnet/contract/CBOTOKHSGS33OXRPKBO7SQCVS4ANHLPWFEXVPEXQYMWWJRROLGBIPFQE>
 - Deploy transaction: <https://stellar.expert/explorer/testnet/tx/af2452babf10e2da844de13a022782722a060a055305f66fded917383dd20eb9>
 - Deploy transaction hash: `af2452babf10e2da844de13a022782722a060a055305f66fded917383dd20eb9`
 - Ledger: `2686246`
 - Deploy time: `2026-05-22T09:10:03Z`
 - WASM hash: `3fce01c14207832eb203734207ab58339bb2ccc4238241d95ae50a3b8d9f8b1d`
+
+For the simplest end-to-end demo, initialize with:
+
+```text
+Session fee: 0
+Reward amount: 0
+PICK reward: 10
+```
+
+This avoids token funding issues while still testing suggestions, session creation, check-in verification, and PICK reputation.
 
 ## What It Solves
 
@@ -256,6 +270,18 @@ Contract ID
 
 FairPick needs a Soroban token contract for session fees and rewards.
 
+The current Testnet demo uses the native XLM Stellar Asset Contract:
+
+```text
+CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
+```
+
+You can derive the same address locally with:
+
+```bash
+stellar contract id asset --asset native --network testnet
+```
+
 For a Stellar asset, deploy or resolve its Stellar Asset Contract:
 
 ```bash
@@ -271,17 +297,24 @@ For local tests, no external token setup is needed. The Rust tests create a mock
 
 ## Basic Usage Flow
 
-1. Build and deploy the FairPick contract.
-2. Paste the FairPick `Contract ID` into the UI.
-3. Connect Freighter on Testnet.
-4. In `Admin`, enter verifier and payment token contract, then click `Initialize`.
-5. Fund the reward pool with `Fund rewards`.
-6. In `User`, enter a wish and click `Gợi ý địa điểm`.
-7. Select a suggestion card.
-8. Click `Tạo Decision Session` and sign with Freighter.
-9. In `Verifier`, enter the Session ID, check-in proof, and review.
-10. Click `Confirm check-in` and sign with the verifier wallet.
-11. Use `Load session` to confirm the session is verified.
+1. Start the UI and open `http://127.0.0.1:5174/`.
+2. Connect Freighter on Testnet.
+3. Paste the FairPick `Contract ID`.
+4. Keep the RPC URL as `https://soroban-testnet.stellar.org`.
+5. Keep the network passphrase as `Test SDF Network ; September 2015`.
+6. In `Admin`, enter the verifier address and payment token contract from the Testnet Deployment section.
+7. For a first demo, set `Session fee = 0`, `Reward amount = 0`, and `PICK reward = 10`.
+8. Click `Initialize` if the contract is not initialized yet.
+9. In `User`, enter a wish and click `Gợi ý địa điểm`.
+10. Select a suggestion card.
+11. Click `Tạo Decision Session` and sign with Freighter.
+12. Copy or keep the returned Session ID.
+13. In `Verifier`, enter the Session ID, check-in proof, and review.
+14. Click `Hash proof`.
+15. Click `Confirm check-in` and sign with the verifier wallet.
+16. Use `Load session` to confirm the session is verified.
+
+If you set `Reward amount` above `0`, the admin must fund the reward pool with `Fund rewards` before the verifier confirms check-in.
 
 ## Common Issues
 
