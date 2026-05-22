@@ -6,6 +6,16 @@ Users enter a wish, receive off-chain place suggestions, select a place, and cre
 
 Repository: <https://github.com/vdcmhaodl/FairPick>
 
+## Testnet Deployment
+
+- Contract ID: `CBOTOKHSGS33OXRPKBO7SQCVS4ANHLPWFEXVPEXQYMWWJRROLGBIPFQE`
+- Contract explorer: <https://stellar.expert/explorer/testnet/contract/CBOTOKHSGS33OXRPKBO7SQCVS4ANHLPWFEXVPEXQYMWWJRROLGBIPFQE>
+- Deploy transaction: <https://stellar.expert/explorer/testnet/tx/af2452babf10e2da844de13a022782722a060a055305f66fded917383dd20eb9>
+- Deploy transaction hash: `af2452babf10e2da844de13a022782722a060a055305f66fded917383dd20eb9`
+- Ledger: `2686246`
+- Deploy time: `2026-05-22T09:10:03Z`
+- WASM hash: `3fce01c14207832eb203734207ab58339bb2ccc4238241d95ae50a3b8d9f8b1d`
+
 ## What It Solves
 
 Normal recommendation apps can silently change rankings, prioritize sponsored venues, or edit reviews in a private database. FairPick keeps the recommendation engine off-chain for speed and privacy, while using Soroban to record the parts that should be auditable:
